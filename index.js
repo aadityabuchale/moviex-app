@@ -25,9 +25,18 @@ function addMovieInfoInLocalStorage(mInfo) {
 function removeMovieInfoFromLocalStorage(mInfo) {
   let localStorageMovies = getFavMoviesFromLocalStorage();
 
+
+
   let filteredMovies = localStorageMovies.filter((eMovie) => {
     return eMovie.title != mInfo.title;
   });
+
+  if( filteredMovies.length == 0 ) {
+    document.querySelector("#favourite-page").style.display = "flex";
+  }
+  else{
+    document.querySelector("#favourite-page").style.display = "none";
+  }
 
   localStorage.setItem("favouriteMovie", JSON.stringify(filteredMovies));
 }
@@ -39,8 +48,6 @@ function renderMovies(movies) {
   let favMovies = getFavMoviesFromLocalStorage();
 
   moviesList.innerHTML = "";
-
-  console.log(movies);
 
   movies.map((eMovie) => {
     const { poster_path, title, vote_average, vote_count } = eMovie;
@@ -69,11 +76,9 @@ function renderMovies(movies) {
                     <p>Votes: ${vote_count}</p>
                     <p>Rating: ${vote_average}</p>
                 </section>
-                <i id='${JSON.stringify(
-                  mInfo
-                )}' class="fa-regular fa-heart fa-2xl fav-icon ${
-      rs && "fa-solid"
-    } "></i>
+                <i id='${JSON.stringify( mInfo )}' class="fa-regular fa-heart fa-2xl fav-icon ${ 
+                  rs && "fa-solid"
+            } "></i>
             </section>
         `;
 
@@ -304,6 +309,13 @@ function renderFavMovies() {
 
   const favMovies = getFavMoviesFromLocalStorage();
 
+  if( favTab.classList.contains("active-tab") && getFavMoviesFromLocalStorage().length == 0 ) {
+    document.querySelector("#favourite-page").style.display = "flex";
+  }
+  else{
+    document.querySelector("#favourite-page").style.display = "none";
+  }
+
   favMovies.map((eFavMovie) => {
     let listItem = document.createElement("li");
     listItem.className = "card";
@@ -353,6 +365,7 @@ function renderFavMovies() {
   });
 }
 
+
 function displayMovies() {
   if (allTab.classList.contains("active-tab")) {
     // all button, show all general movies
@@ -370,6 +383,12 @@ function switchTab(event) {
 
   event.target.classList.add("active-tab");
 
+  if( favTab.classList.contains("active-tab") && getFavMoviesFromLocalStorage().length == 0 ) {
+    document.querySelector("#favourite-page").style.display = "flex";
+  }
+  else{
+    document.querySelector("#favourite-page").style.display = "none";
+  }
   displayMovies();
 }
 

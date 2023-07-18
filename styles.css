@@ -144,9 +144,6 @@ footer {
     margin-top: 20px;
 }
 
-.fav-icon:hover {
-    
-}
 .movies-list-pagination {
     margin: 25px 40px;
 }
@@ -165,6 +162,16 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+#favourite-page {
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    display: none;
 }
 
 
@@ -210,6 +217,10 @@ footer {
     .card {
         width: 240px;
         margin: 15px 0px;
+    }
+
+    #favourite-page h1{
+        font-size: 20px;
     }
 }
 
