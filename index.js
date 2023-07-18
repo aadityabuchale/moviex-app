@@ -34,6 +34,7 @@ function removeMovieInfoFromLocalStorage(mInfo) {
 
 showLoader();
 
+
 function renderMovies(movies) {
   let favMovies = getFavMoviesFromLocalStorage();
 
@@ -142,16 +143,19 @@ fetchMovies();
 
 async function searchMovies() {
   const searchText = searchInput.value;
+  
+  if( searchText !== ""){
+    const resp = await fetch(
+      `https://api.themoviedb.org/3/search/movie?query=${searchText}&api_key=${APIKEY}&include_adult=false&language=en-US&page=${currentPage}`
+    );
+  
+    const data = await resp.json();
+    totalPages = data.total_pages;
+    tPage.innerText = totalPages;
+    movies = data.results;
+    renderMovies(movies);
+  }
 
-  const resp = await fetch(
-    `https://api.themoviedb.org/3/search/movie?query=${searchText}&api_key=${APIKEY}&include_adult=false&language=en-US&page=${currentPage}`
-  );
-
-  const data = await resp.json();
-  totalPages = data.total_pages;
-  tPage.innerText = totalPages;
-  movies = data.results;
-  renderMovies(movies);
 }
 
 const searchBtn = document.getElementById("search-button");
