@@ -10,6 +10,9 @@ header {
     background-color: #333;
     color: white;
     padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
 }
 
 header > a {
@@ -17,13 +20,35 @@ header > a {
     text-decoration: none;
 }
 
-
 footer {
     background-color: #333;
     color: white;
     padding: 10px;
     text-align: center;
 }
+
+header ul{
+    color: #fff;
+    display:flex;
+    text-decoration: none;
+    list-style-type: none;
+    
+}
+header ul li {
+    margin-right: 4vw;
+    cursor: pointer;
+}
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header #show-more-genre {
+    padding: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
 
 .search-bar {
     display: flex;
@@ -36,8 +61,7 @@ footer {
     height: 45px;
     border: 1px solid #333;
     border-radius: 5px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin: 20px 0px 10px 0px;
     padding: 0 7px;
     font-size: 24px;
 }
@@ -48,6 +72,7 @@ footer {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 20px 0px;
     background-color: #333;
     color: white;
 }
@@ -90,7 +115,7 @@ footer {
 .pagination {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 #prev-button, #current-button, #next-button {
@@ -152,7 +177,7 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 20px 0;
+    padding: 20px 0px 0px 0px;
 }
 
 

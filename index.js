@@ -1,6 +1,6 @@
 const moviesList = document.getElementById("movies-list");
 
-const APIKEY = "f531333d637d0c44abc85b3e74db2186";
+const APIKEY = "db10ecdc3b30a0913e712a2030fb7525";
 let movies = [];
 
 let currentPage = 1,
@@ -139,7 +139,7 @@ fetchMovies();
   }
 
   function hideLoader() {
-    document.querySelector('.movies-list-pagination').style.display = 'block';
+    document.querySelector('.movies-list-pagination').style.display = 'flex';
     document.querySelector("#loader").style.display = "none";
 
   }
