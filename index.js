@@ -145,6 +145,62 @@ fetchMovies();
   }
 
 
+// -------------------- show hide navbar ---------------- //
+
+function handleWindowResize() {
+
+  let windowWidth = window.innerWidth;
+
+  if( windowWidth <= 980 ){
+    document.querySelector(".header-ul li:last-child").style.display = "none";  
+  }
+  else{
+    document.querySelector(".header-ul li:last-child").style.display = "inline";
+  }
+
+  if( windowWidth <= 745){
+    document.querySelector(".header-ul").style.display = "none";
+    document.querySelector("#show-navbar").style.display = "inline";
+    document.querySelector("header nav").style.justifyContent = "flex-end";
+  }
+  else{
+    document.querySelector(".header-ul").style.display = "flex";
+    document.querySelector("#show-navbar").style.display = "none";
+    document.querySelector(".header-ul").classList.add("desktop-class");
+    document.querySelector("header nav").style.justifyContent = "space-between";
+  }
+}
+window.onresize = handleWindowResize;
+
+
+
+document.querySelector("#show-navbar").addEventListener("click", () => {
+
+
+    document.querySelector(".header-ul").style.display = "flex";
+    document.querySelector(".header-ul li:last-child").style.display = "inline";
+
+    
+    document.querySelector(".header-ul").classList.remove("desktop-class");
+    document.querySelector(".header-ul").classList.add("mobile-class");
+
+    document.querySelector("#show-navbar").style.display = "none";
+    document.querySelector("#hide-navbar").style.display = "inline";
+})
+
+document.querySelector("#hide-navbar").addEventListener("click", () => {
+
+    document.querySelector(".header-ul").classList.remove("mobile-class");
+    document.querySelector(".header-ul").classList.remove("desktop-class");
+
+    document.querySelector(".header-ul").style.display = "none";
+
+    document.querySelector("#show-navbar").style.display = "inline";
+    document.querySelector("#hide-navbar").style.display = "none";
+})
+
+
+
 
 async function searchMovies() {
   const searchText = searchInput.value;

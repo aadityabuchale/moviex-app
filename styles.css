@@ -11,7 +11,7 @@ header {
     color: white;
     padding: 10px;
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 1.8fr;
     align-items: center;
 }
 
@@ -27,13 +27,33 @@ footer {
     text-align: center;
 }
 
-header ul{
+.desktop-class{
     color: #fff;
     display:flex;
     text-decoration: none;
     list-style-type: none;
-    
 }
+
+.mobile-class {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    row-gap: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    position: absolute;
+    color: #333;
+    background-color: #c7c4c4;
+    top: 60px;
+    width: 50%;
+    font-size: 18px;
+    justify-content: space-evenly;
+    border: 1px solid #c7c4c4;
+    height: 30%;
+    align-items: center;
+    right: 30px;
+}
+
 header ul li {
     margin-right: 4vw;
     cursor: pointer;
@@ -43,13 +63,26 @@ header nav {
     justify-content: space-between;
     align-items: center;
 }
-header #show-more-genre {
+header #btns {
+    display: flex;
+    gap: 3px;
+}
+#btns button {
     padding: 8px;
-    margin-right: 10px;
-    cursor: pointer;
 }
 
+#show-navbar , #hide-navbar, #signin-btn {
+    padding: 8px;
+    font-size: 14px;
+}
 
+#hide-navbar {
+    display: none;
+}
+
+#show-navbar {
+    display: none;
+}
 .search-bar {
     display: flex;
     justify-content: center;
@@ -199,6 +232,20 @@ header #show-more-genre {
     display: none;
 }
 
+
+@media screen and (max-width: 720px){
+
+    header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    header ul li {
+        margin-right: 4vw;
+        cursor: pointer;
+        border-bottom: 1px solid #000;
+    }
+}
 
 @media  screen and (max-width: 480px) {
 
