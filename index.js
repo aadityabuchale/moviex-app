@@ -146,10 +146,11 @@ fetchMovies();
 
 
 // -------------------- show hide navbar ---------------- //
+  let windowWidth = window.innerWidth;
 
 function handleWindowResize() {
 
-  let windowWidth = window.innerWidth;
+  windowWidth = window.innerWidth;
 
   if( windowWidth <= 980 ){
     document.querySelector(".header-ul li:last-child").style.display = "none";  
@@ -162,17 +163,20 @@ function handleWindowResize() {
     document.querySelector(".header-ul").style.display = "none";
     document.querySelector("#show-navbar").style.display = "inline";
     document.querySelector("header nav").style.justifyContent = "flex-end";
+    document.querySelector("#hide-navbar").style.display = "none";
+    
   }
   else{
     document.querySelector(".header-ul").style.display = "flex";
     document.querySelector("#show-navbar").style.display = "none";
     document.querySelector(".header-ul").classList.add("desktop-class");
+    document.querySelector(".header-ul").classList.remove("mobile-class");
     document.querySelector("header nav").style.justifyContent = "space-between";
   }
 }
 window.onresize = handleWindowResize;
 
-
+handleWindowResize();
 
 document.querySelector("#show-navbar").addEventListener("click", () => {
 
@@ -180,7 +184,7 @@ document.querySelector("#show-navbar").addEventListener("click", () => {
     document.querySelector(".header-ul").style.display = "flex";
     document.querySelector(".header-ul li:last-child").style.display = "inline";
 
-    
+
     document.querySelector(".header-ul").classList.remove("desktop-class");
     document.querySelector(".header-ul").classList.add("mobile-class");
 
