@@ -6,6 +6,9 @@ let movies = [];
 let currentPage = 1,
   totalPages = 1;
 
+  // --------------- LocalStorage Opeations ---------------------- //
+
+
 function getFavMoviesFromLocalStorage() {
   const favMovies = JSON.parse(localStorage.getItem("favouriteMovie"));
   return favMovies === null ? [] : favMovies;
@@ -25,8 +28,6 @@ function addMovieInfoInLocalStorage(mInfo) {
 function removeMovieInfoFromLocalStorage(mInfo) {
   let localStorageMovies = getFavMoviesFromLocalStorage();
 
-
-
   let filteredMovies = localStorageMovies.filter((eMovie) => {
     return eMovie.title != mInfo.title;
   });
@@ -41,7 +42,8 @@ function removeMovieInfoFromLocalStorage(mInfo) {
   localStorage.setItem("favouriteMovie", JSON.stringify(filteredMovies));
 }
 
-showLoader();
+
+//  ------------------ Render Movies --------------------- //
 
 
 function renderMovies(movies) {
@@ -82,16 +84,21 @@ function renderMovies(movies) {
             </section>
         `;
 
+
+//  ------------------ Handling Favourite Icon ---------------------- //
+
     const favIconBtn = listItem.querySelector(".fav-icon");
 
     favIconBtn.addEventListener("click", (event) => {
-      console.log(event.target);
+ 
       const { id } = event.target;
-      console.log(id);
+
       const mInfo = JSON.parse(id);
+
       if (favIconBtn.classList.contains("fa-solid")) {
         // unmark it
         // 1) remove the fa-solid from the facIconBtn
+
         favIconBtn.classList.remove("fa-solid");
         // 2) remove the info of this movie from the localstroge
         removeMovieInfoFromLocalStorage(mInfo);
@@ -108,30 +115,81 @@ function renderMovies(movies) {
   });
 }
 
+
+ //  ----------------- fetch movies from API -------------------- //
+
 async function fetchMovies() {
   try {
     const resp = await fetch(
-      `https://api.themoviedb.org/3/movie/top_rated?api_key=${APIKEY}&language=en-US&page=${currentPage}`
+      `https://api.themoviedb.org/3/movie/now_playing?api_key=${APIKEY}&language=en-US&page=${currentPage}`
     );
     let data = await resp.json();
-
+    
     hideLoader();
 
     movies = data.results;
     totalPages = data.total_pages;
+
     tPage.innerText = totalPages;
     renderMovies(movies);
-  } catch (error) {
+
+    return movies;
+  } 
+  catch (error) {
     console.log(error);
   }
 }
 
-fetchMovies();
+( async () => {
+  await fetchMovies();
+})()
+
+
+//  --------------------- fetch genres ---------------------- //
+
+async function fetchGenres() {
+  
+  const genreRes = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}&language=en`)
+  let genreData = await genreRes.json();
+
+  const list_items = document.querySelectorAll(".header-ul li");
+
+  genreData = genreData.genres;
+
+  list_items.forEach( (li) => {
+    for( let i =0 ; i< genreData.length ; i++ ) {
+        if( li.innerText == genreData[i].name){
+          li.id = genreData[i].id;
+        }
+    }
+  })
+
+}
+
+fetchGenres();
+
+let ul = document.querySelector(".header-ul");
+
+  
+  ul.addEventListener( 'click', (e)=> {
+
+      let selectedMovies = [];
+
+      if(e.target.id != "")
+      {
+        selectedMovies = movies.filter( (movie) => {
+            return movie.genre_ids.includes(+e.target.id);
+        })
+      }
+      
+      renderMovies(selectedMovies);
+  })
 
 
 
   // ----------------- loader --------------------------//
 
+  showLoader();
 
   function showLoader() {
     document.querySelector('.movies-list-pagination').style.display = 'none';
@@ -146,9 +204,10 @@ fetchMovies();
 
 
 // -------------------- show hide navbar ---------------- //
+
   let windowWidth = window.innerWidth;
 
-function handleWindowResize() {
+function handleWindowResize() {            // removing elements as per screen
 
   windowWidth = window.innerWidth;
 
@@ -174,11 +233,12 @@ function handleWindowResize() {
     document.querySelector("header nav").style.justifyContent = "space-between";
   }
 }
-window.onresize = handleWindowResize;
+
+window.onresize = handleWindowResize;                                         // window.onresize
 
 handleWindowResize();
 
-document.querySelector("#show-navbar").addEventListener("click", () => {
+document.querySelector("#show-navbar").addEventListener("click", () => {    // adding vertical navbar
 
 
     document.querySelector(".header-ul").style.display = "flex";
@@ -192,7 +252,7 @@ document.querySelector("#show-navbar").addEventListener("click", () => {
     document.querySelector("#hide-navbar").style.display = "inline";
 })
 
-document.querySelector("#hide-navbar").addEventListener("click", () => {
+document.querySelector("#hide-navbar").addEventListener("click", () => {   // removing vertical navbar
 
     document.querySelector(".header-ul").classList.remove("mobile-class");
     document.querySelector(".header-ul").classList.remove("desktop-class");
@@ -204,7 +264,34 @@ document.querySelector("#hide-navbar").addEventListener("click", () => {
 })
 
 
+document.querySelector("body").addEventListener("click", (e) => {        // hiding navbar when user clicks outside
+  
+  let ul = document.querySelector(".header-ul");
 
+  if( ul.classList.contains("mobile-class")){
+
+    if( !e.target.classList.contains("header-ul") && e.target.tagName != "BUTTON" && e.target.tagName != "I"){
+      console.log("Please select");
+      
+      document.querySelector(".header-ul").classList.remove("desktop-class");
+  
+      document.querySelector(".header-ul").style.display = "none";
+  
+      document.querySelector("#show-navbar").style.display = "inline";
+      document.querySelector("#hide-navbar").style.display = "none";
+    }
+
+  }
+})
+
+
+
+// ---------------  search movies---------------------- //
+
+const searchBtn = document.getElementById("search-button");
+const searchInput = document.getElementById("search-input");
+
+searchBtn.addEventListener("click", searchMovies);
 
 async function searchMovies() {
   const searchText = searchInput.value;
@@ -223,12 +310,19 @@ async function searchMovies() {
 
 }
 
-const searchBtn = document.getElementById("search-button");
-const searchInput = document.getElementById("search-input");
 
-searchBtn.addEventListener("click", searchMovies);
+// -------------------  prev next button ------------------------- //
 
-function getPreviousPageFunc() {
+const prevBtn = document.getElementById("prev-button");
+prevBtn.disabled = true;
+const nextBtn = document.getElementById("next-button");
+const currPage = document.getElementById("currPage");
+const tPage = document.getElementById("totalPage");
+
+prevBtn.addEventListener("click", getPreviousPageFunc);
+nextBtn.addEventListener("click", getNextPageFunc);
+
+function getPreviousPageFunc() {     // previous page function
   currentPage--;
   currPage.innerText = currentPage;
 
@@ -247,7 +341,7 @@ function getPreviousPageFunc() {
   }
 }
 
-function getNextPageFunc() {
+function getNextPageFunc() {     // next page function
   currentPage++;
   currPage.innerText = currentPage;
 
@@ -266,18 +360,12 @@ function getNextPageFunc() {
   }
 }
 
-const prevBtn = document.getElementById("prev-button");
-prevBtn.disabled = true;
-const nextBtn = document.getElementById("next-button");
-const currPage = document.getElementById("currPage");
-const tPage = document.getElementById("totalPage");
+// -------------------  sorting operations ------------------------- //
 
-prevBtn.addEventListener("click", getPreviousPageFunc);
-nextBtn.addEventListener("click", getNextPageFunc);
 
 let sortByDateFlag = 0; // 0: ASC   // 1: DESC
 
-function sortByDate() {
+function sortByDate() {                                   // sorting by dates
   if (sortByDateFlag) {
     // desc
     movies.sort((m1, m2) => {
@@ -303,10 +391,12 @@ function sortByDate() {
   }
 }
 
+
+
 let sortByRatingFlag = 0; // 0: INC   1: DESC
 
-function sortByRatingFunc() {
-  if (sortByRatingFlag) {
+function sortByRatingFunc() {                            // sorting by rating
+  if (sortByRatingFlag) { 
     // DESC
     movies.sort((m1, m2) => {
       return m2.vote_average - m1.vote_average;
@@ -339,13 +429,19 @@ const sortByRating = document.getElementById("sort-by-rating");
 
 sortByRating.addEventListener("click", sortByRatingFunc);
 
+
+
+// -------------------  debouncing ------------------------- //
+
+
 function onSearchChange(event) {
-  console.log("ADnhmm 2 secs done!");
+
   let val = event.target.value;
 
   if (val) {
     searchMovies();
-  } else {
+  } 
+  else {
     fetchMovies();
   }
 }
@@ -363,6 +459,10 @@ function debounce(event) {
 searchInput.addEventListener("input", (event) => {
   debounce(event);
 });
+
+
+// -------------------  render favourite movies ------------------------- //
+
 
 function renderFavMovies() {
   moviesList.innerHTML = "";
@@ -410,7 +510,7 @@ function renderFavMovies() {
 
     const favIconBtn = listItem.querySelector(".fav-icon");
 
-    favIconBtn.addEventListener("click", (event) => {
+    favIconBtn.addEventListener("click", (event) => {             // fav movie click
       // this will remove the card info from the local storage
       const { id } = event.target;
       const mInfo = JSON.parse(id);
@@ -425,6 +525,7 @@ function renderFavMovies() {
   });
 }
 
+// ---------------------  active and favourite tab operations ------------------------ //
 
 function displayMovies() {
   if (allTab.classList.contains("active-tab")) {
@@ -443,7 +544,7 @@ function switchTab(event) {
 
   event.target.classList.add("active-tab");
 
-  if( favTab.classList.contains("active-tab") && getFavMoviesFromLocalStorage().length == 0 ) {
+  if( favTab.classList.contains("active-tab") && getFavMoviesFromLocalStorage().length == 0 ) {    // handling fav page
     document.querySelector("#favourite-page").style.display = "flex";
   }
   else{
