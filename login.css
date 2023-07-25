@@ -111,3 +111,16 @@ input[type="submit"]:hover{
 .signup a:hover{
     text-decoration:underline;
 }
+
+@media (max-width: 480px) {
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .center {
+        width: 320px;
+    }
+}

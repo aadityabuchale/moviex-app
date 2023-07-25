@@ -17,8 +17,6 @@ function getFavMoviesFromLocalStorage() {
 function addMovieInfoInLocalStorage(mInfo) {
   const localStorageMovies = getFavMoviesFromLocalStorage();
 
-  console.log(localStorageMovies);
-
   localStorage.setItem(
     "favouriteMovie",
     JSON.stringify([...localStorageMovies, mInfo])
@@ -28,11 +26,12 @@ function addMovieInfoInLocalStorage(mInfo) {
 function removeMovieInfoFromLocalStorage(mInfo) {
   let localStorageMovies = getFavMoviesFromLocalStorage();
 
+
   let filteredMovies = localStorageMovies.filter((eMovie) => {
     return eMovie.title != mInfo.title;
   });
 
-  if( filteredMovies.length == 0 ) {
+  if( document.querySelector("#favorits-tab").classList.contains("active-tab") && filteredMovies.length == 0 ) {    // handling fav page
     document.querySelector("#favourite-page").style.display = "flex";
   }
   else{
@@ -84,13 +83,13 @@ function renderMovies(movies) {
             </section>
         `;
 
-
 //  ------------------ Handling Favourite Icon ---------------------- //
 
     const favIconBtn = listItem.querySelector(".fav-icon");
 
     favIconBtn.addEventListener("click", (event) => {
- 
+
+
       const { id } = event.target;
 
       const mInfo = JSON.parse(id);
@@ -98,21 +97,25 @@ function renderMovies(movies) {
       if (favIconBtn.classList.contains("fa-solid")) {
         // unmark it
         // 1) remove the fa-solid from the facIconBtn
-
         favIconBtn.classList.remove("fa-solid");
+
         // 2) remove the info of this movie from the localstroge
         removeMovieInfoFromLocalStorage(mInfo);
+
       } else {
         // mark it
         // 1) add the fa-solid class to the favIconBtn button
         favIconBtn.classList.add("fa-solid");
         // 2) add the info of this movie to the localstorage
         addMovieInfoInLocalStorage(mInfo);
+
       }
+
     });
 
     moviesList.appendChild(listItem);
   });
+
 }
 
 
@@ -147,6 +150,8 @@ async function fetchMovies() {
 
 //  --------------------- fetch genres ---------------------- //
 
+let genreArr = [];
+
 async function fetchGenres() {
   
   const genreRes = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${APIKEY}&language=en`)
@@ -155,6 +160,8 @@ async function fetchGenres() {
   const list_items = document.querySelectorAll(".header-ul li");
 
   genreData = genreData.genres;
+
+  genreArr = genreData;
 
   list_items.forEach( (li) => {
     for( let i =0 ; i< genreData.length ; i++ ) {
@@ -271,7 +278,6 @@ document.querySelector("body").addEventListener("click", (e) => {        // hidi
   if( ul.classList.contains("mobile-class")){
 
     if( !e.target.classList.contains("header-ul") && e.target.tagName != "BUTTON" && e.target.tagName != "I"){
-      console.log("Please select");
       
       document.querySelector(".header-ul").classList.remove("desktop-class");
   
@@ -284,6 +290,84 @@ document.querySelector("body").addEventListener("click", (e) => {        // hidi
   }
 })
 
+
+
+// ------------------- modal ------------------------------//
+
+let moviesContainer = document.querySelector("#movies-list");
+
+moviesContainer.addEventListener("click", (e) => {
+  
+  movies.forEach( movie => {
+
+      if( movie.title == e.target.parentNode.childNodes[1].alt){
+        
+        const {title,poster_path,original_language,vote_average,overview} = movie;
+
+        let posterUrl = `https://image.tmdb.org/t/p/original${poster_path}`
+        let runtime = Math.floor(Math.random()*(200-150)+150)
+        let lang = original_language.toUpperCase()
+        let duration = runtime*2
+
+        localStorage.setItem("mvPrice",runtime)
+
+
+        let genreName;
+        genreArr.forEach((e)=>{
+            
+            if( movie.genre_ids[0] == e.id){
+                genreName = e.name
+                
+            }
+        })
+
+        let modalContainer = document.querySelector(".modal-container");
+
+        modalContainer.classList.remove("hidden")
+
+        modalContainer.innerHTML = `<div class="modal-card">
+
+                                        <div class="img-section">
+                                            <img src=${posterUrl} alt=${title} class="modal-img">
+                                        </div>
+
+                                        <div class="description-section">
+
+                                            <div class="description-card">
+                                                <h1 class="movie-name">${title}</h1>
+                                                <h3 class="movie-rating"><i class="fa-solid fa-star"></i> <span class="mv-rating">${vote_average}</span>/10</h3>
+                                                <p class="mv-lang">${lang}</p>
+                                                <p><span>${runtime} minutes</span><i class="fa-solid fa-circle-small"></i> <span>${genreName}</span></p>
+                                                <p class="overview">${overview}</p>
+                                                <p>&#8377; <span class="mv-price">${duration}</span></p>
+                                                <button class="book-tickets-btn">Book Tickets</button>      
+                                            </div>
+
+                                            <button class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+                                        </div>  
+                                    </div>`
+      
+                                    
+        const closeBtn = document.querySelector(".modal-close-btn")
+        
+        closeBtn.addEventListener("click", hideModal)
+
+        modalContainer.addEventListener("click", hideModal)
+
+        const bookTicketsBtn = document.querySelector(".book-tickets-btn")
+
+        bookTicketsBtn.addEventListener("click",(e)=>{
+            e.preventDefault();
+        })
+
+      }
+  }) 
+
+})
+
+function hideModal(){
+  document.querySelector(".modal-container").classList.add("hidden")
+}
 
 
 // ---------------  search movies---------------------- //
@@ -469,13 +553,6 @@ function renderFavMovies() {
 
   const favMovies = getFavMoviesFromLocalStorage();
 
-  if( favTab.classList.contains("active-tab") && getFavMoviesFromLocalStorage().length == 0 ) {
-    document.querySelector("#favourite-page").style.display = "flex";
-  }
-  else{
-    document.querySelector("#favourite-page").style.display = "none";
-  }
-
   favMovies.map((eFavMovie) => {
     let listItem = document.createElement("li");
     listItem.className = "card";
@@ -514,7 +591,6 @@ function renderFavMovies() {
       // this will remove the card info from the local storage
       const { id } = event.target;
       const mInfo = JSON.parse(id);
-      console.log(mInfo);
       removeMovieInfoFromLocalStorage(mInfo);
 
       // this will remove the card from the ui
@@ -526,6 +602,8 @@ function renderFavMovies() {
 }
 
 // ---------------------  active and favourite tab operations ------------------------ //
+
+
 
 function displayMovies() {
   if (allTab.classList.contains("active-tab")) {

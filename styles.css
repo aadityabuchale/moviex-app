@@ -13,6 +13,7 @@
 
 /* ------------ header start ----------------*/
 
+
 header {
     background-color: var(--main-color);
     color: white;
@@ -256,7 +257,97 @@ header #btns {
 /* ------------ main end  ----------------*/
 
 
+
+/* ------------modal start -------------- */
+
+.modal-container{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden{
+    display: none;
+}
+
+.modal-card{
+    width: 50%;
+    display: flex;
+    gap: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 7px;
+}
+
+.img-section {
+    width: 50%;
+    height: 100%;
+    
+}
+
+.img-section img{
+    width: 100%;
+}
+
+.description-section{
+    display: flex;
+    align-items: flex-start;
+    width: 70%;
+}
+
+.movie-name {
+    font-size: 2.6vmax;
+}
+
+.overview {
+    height: 15vw;
+    overflow:auto;
+    font-size: 1.2vw;
+}
+
+.movie-rating {
+    font-size: 1.3vw;
+}
+.description-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 95%;
+    height: 100%;
+    font-size: 1.4vmax;
+}
+
+.book-tickets-btn{
+    width: 50%;
+    padding: 8px;
+    border: 2px solid black;
+    cursor: pointer;
+    align-self: center;
+}
+
+.modal-close-btn{
+    background-color: transparent;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+}
+
+
 /* ------------ media queries  ----------------*/
+
+@media screen and (max-width: 780px){
+    .modal-card {
+        width: 70%;
+    }
+}
 
 @media screen and (max-width: 720px){
 
@@ -270,9 +361,10 @@ header #btns {
         cursor: pointer;
         border-bottom: 1px solid #252525;
     }
+
 }
 
-@media  screen and (max-width: 480px) {
+@media (max-width: 560px) {
 
     header>a {
         font-size: 10px;
@@ -303,21 +395,46 @@ header #btns {
         width: 150px;
         height: 35px;
         font-size: 16px;
-        margin: 20px 0px;
+        margin: 10px 0px;
     }
 
     #search-button {
         height: 35px;
-        margin: 20px 0px;
+        margin: 10px 0px;
     }
 
     .card {
-        width: 240px;
+        width: 260px;
         margin: 15px 0px;
     }
 
     #favourite-page h1{
         font-size: 20px;
+    }
+
+    .overview {
+        display: none;
+    }
+
+    .book-tickets-btn{
+        width: 100%;
+        font-size: 1.3vh;
+    }
+
+    .movie-rating {
+        font-size: 1.5vh;
+    }
+    .description-card {
+        font-size: 1.2vh;
+    }
+
+    .movie-name {
+        font-size: 2vh;
+    }
+    
+    .img-section img {
+        height: 20vh;
+        width: 25vw;
     }
 }
 
